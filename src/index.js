@@ -27,6 +27,8 @@ function updateWeather(response) {
   windSpeedElement.innerHTML = `${response.data.wind.speed}km/h`;
   timeElement.innerHTML = formatDate(date);
   iconElement.innerHTML = `<img src="${response.data.condition.icon_url}"class = "weather-app-icon"/>`;
+
+  getForecast(response.data.city);
 }
 function formatDate(date) {
   let minutes = date.getMinutes();
@@ -48,9 +50,43 @@ function formatDate(date) {
   }
   return `${day} ${hour}:${minutes}`;
 }
+function displayForecast(response) {
+  let days = ["Tue", "Wed", "Thu", "Fri", "Sat"];
+  let forecastHtml = "";
+
+  days.forEach(function (day) {
+    forecastHtml =
+      forecastHtml +
+      `
+      <div class="weather-forecast-day">
+        <div class="weather-forecast-date">${day}</div>
+        <div class="weather-forecast-icon">🌤️</div>
+        <div class="weather-forecast-temperatures">
+          <div class="weather-forecast-temperature">
+            <strong>15º</strong>
+          </div>
+          <div class="weather-forecast-temperature">9º</div>
+        </div>
+      </div>
+    `;
+    console.log(response);
+  });
+
+  let forecastElement = document.querySelector("#forecast");
+  forecastElement.innerHTML = forecastHtml;
+}
+
+function getForecast(city) {
+  let apiKey = "b187a116ta5dc648f1o84f8b1a5e4430";
+  let apiUrl =
+    "https://api.shecodes.io/weather/v1/forecast?query=${city}&key=b187a116ta5dc648f1o84f8b1a5e4430&units=metric";
+  axios(apiUrl).then(displayForecast);
+  console.log(apiUrl);
+}
 function searchCity(city) {
   let apiKey = "b187a116ta5dc648f1o84f8b1a5e4430";
   let apiUrl = `https://api.shecodes.io/weather/v1/current?query=${city}&key=b187a116ta5dc648f1o84f8b1a5e4430&units=metric`;
   axios.get(apiUrl).then(updateWeather);
 }
 searchCity("Dubai");
+displayForecast();
